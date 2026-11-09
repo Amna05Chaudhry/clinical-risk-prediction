@@ -1,0 +1,59 @@
+[
+  {
+    "name": "High-risk patient",
+    "true_label": 1,
+    "values": {
+      "age": 45.0,
+      "sex": 1.0,
+      "cp": 4.0,
+      "trestbps": 142.0,
+      "chol": 309.0,
+      "fbs": 0.0,
+      "restecg": 2.0,
+      "thalach": 147.0,
+      "exang": 1.0,
+      "oldpeak": 0.0,
+      "slope": 2.0,
+      "ca": 3.0,
+      "thal": 7.0
+    }
+  },
+  {
+    "name": "Low-risk patient",
+    "true_label": 0,
+    "values": {
+      "age": 63.0,
+      "sex": 0.0,
+      "cp": 3.0,
+      "trestbps": 135.0,
+      "chol": 252.0,
+      "fbs": 0.0,
+      "restecg": 2.0,
+      "thalach": 172.0,
+      "exang": 0.0,
+      "oldpeak": 0.0,
+      "slope": 1.0,
+      "ca": 0.0,
+      "thal": 3.0
+    }
+  },
+  {
+    "name": "Borderline patient",
+    "true_label": 1,
+    "values": {
+      "age": 44.0,
+      "sex": 1.0,
+      "cp": 4.0,
+      "trestbps": 120.0,
+      "chol": 169.0,
+      "fbs": 0.0,
+      "restecg": 0.0,
+      "thalach": 144.0,
+      "exang": 1.0,
+      "oldpeak": 2.8,
+      "slope": 3.0,
+      "ca": 0.0,
+      "thal": 6.0
+    }
+  }
+]
