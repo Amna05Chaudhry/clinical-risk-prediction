@@ -85,6 +85,9 @@ def describe_value(f, val) -> str:
         return str(f.options.get(key, val))
     v = float(val)
     txt = f"{v:g}" if f.step < 1 else f"{v:.0f}"
+    if f.ordinal:  # grades / counts: "2 of 5" reads better than "2 grade 0-5"
+        top = f.unit.split("-")[-1] if "-" in f.unit else ""
+        return f"{txt} of {top}" if top else txt
     return f"{txt} {f.unit}".strip()
 
 

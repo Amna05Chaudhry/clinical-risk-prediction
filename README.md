@@ -4,7 +4,31 @@ Explainable risk scores for **chronic kidney disease** and **heart disease** fro
 
 > ⚠ Research demo, not for clinical use.
 
-<!-- TODO: screenshot in docs/ -->
+![Kidney tab: high-risk sample patient with risk gauge and top SHAP factors](docs/screenshot_kidney.jpg)
+
+| Heart tab | Model card |
+|---|---|
+| ![Heart tab](docs/screenshot_heart.jpg) | ![Model card](docs/screenshot_model_card.jpg) |
+
+## Features
+- **Two risk calculators** (Kidney, Heart) with grouped input forms: sliders and selects with units and typical reference ranges in the tooltips.
+- **Risk gauge** (low / moderate / high bands) and the **top 5 SHAP factors for this patient** in plain language ("Hemoglobin = 8.7 g/dL (below the typical range) pushes the risk up").
+- **Sample patients one click away**: real high-risk, low-risk and borderline patients from the held-out test set (`examples/`).
+- **Model card tab**: CV and test metrics for all four models, ROC curves, confusion matrix, global SHAP importance and beeswarm, dataset description, leakage checks, limitations.
+- Teal medical theme, Inter font, "research demo" disclaimer.
+
+## Architecture
+```mermaid
+flowchart LR
+  A[scripts/download_data.py<br/>UCI CKD + Cleveland] --> B[crp/data.py<br/>clean + de-duplicate]
+  B --> C[stratified 80/20 split]
+  C --> D[crp/pipeline.py<br/>impute → one-hot → scale → model]
+  D --> E[5-fold CV<br/>LR · DT · RF · XGBoost]
+  E --> F[best CV ROC-AUC<br/>→ held-out test]
+  F --> G[models/*.joblib<br/>reports/metrics.json]
+  G --> H[crp/explain.py<br/>SHAP per feature]
+  H --> I[app.py<br/>Streamlit UI]
+```
 
 ## Results (held-out 20% test set; CV = stratified 5-fold on the training split, mean ± std)
 
@@ -29,6 +53,9 @@ python scripts/download_data.py                  # UCI data -> data/raw/
 streamlit run app.py                              # trained models are already in models/
 ```
 Retrain: `python -m crp.train` (slow on CPU: permutation tests). Tests: `python -m pytest -q`.
+
+## Tech stack
+Python 3.12 · scikit-learn · XGBoost · SHAP · pandas · Streamlit · Plotly · matplotlib
 
 ## Structure
 `crp/features.py` feature metadata (units, reference ranges) · `crp/data.py` loading/cleaning · `crp/pipeline.py` impute → one-hot → scale → model · `crp/train.py` CV, selection, test, checks, figures · `crp/explain.py` SHAP mapped back to original features · `app.py` Streamlit UI.

@@ -57,6 +57,7 @@ div[data-testid="stForm"] { border-radius: 14px; border: 1px solid rgba(128,128,
 .stTabs [data-baseweb="tab-list"] { gap: .4rem; }
 .stTabs [data-baseweb="tab"] { font-weight: 600; padding: .45rem .9rem; border-radius: 10px 10px 0 0; }
 .stButton > button { border-radius: 10px; font-weight: 600; }
+[data-testid="stMetricValue"] { font-size: 1.55rem; font-weight: 700; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -220,6 +221,10 @@ def predict_tab(task: str):
                 f"accuracy **{t['accuracy']:.1%}** (n={rep['data']['test_rows']}).")
 
     samples = load_samples(task)
+    healthy = next((s for s in samples if s["name"] == "Low-risk patient"), None)
+    if healthy and f"{task}__init" not in st.session_state:  # open on a healthy patient, not a mix of medians
+        apply_sample(task, healthy["values"])
+        st.session_state[f"{task}__init"] = True
     bcols = st.columns(len(samples) + 2)
     bcols[0].markdown("<div class='muted' style='padding-top:.45rem'>Try a sample patient:</div>", unsafe_allow_html=True)
     for i, s in enumerate(samples):
@@ -227,7 +232,8 @@ def predict_tab(task: str):
                             use_container_width=True,
                             help=f"Real patient from the held-out test set (true label: "
                                  f"{'positive' if s['true_label'] else 'negative'})")
-    bcols[-1].button("Reset", key=f"{task}_reset", on_click=reset_defaults, args=(task,), use_container_width=True)
+    bcols[-1].button("Dataset medians", key=f"{task}_reset", on_click=reset_defaults, args=(task,),
+                     use_container_width=True, help="Set every input to the training-set median / most common value")
 
     left, right = st.columns([1.15, 1], gap="large")
     with left:
